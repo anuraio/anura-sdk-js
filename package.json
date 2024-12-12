@@ -1,11 +1,17 @@
 {
   "name": "@anuraio/anura-sdk",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Anura SDK for JavaScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "/dist"
+  ],
+  "keywords": [
+    "ad fraud",
+    "affiliate fraud detection",
+    "click-fraud",
+    "spam"
   ],
   "scripts": {
     "start": "tsx src/test.ts",
