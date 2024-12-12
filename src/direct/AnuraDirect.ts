@@ -64,7 +64,7 @@ export class AnuraDirect {
       try {
         result = await response.json();
       } catch (error: any) {
-        result = 'Unknown error occurred.';
+        result = 'Invalid JSON received.';
       }
 
       const error = result.error ?? result;
@@ -77,8 +77,11 @@ export class AnuraDirect {
       }
     }
 
-    const result = await response.json();
-    return result;
+    try {
+      return await response.json();
+    } catch (error: any) {
+      throw new AnuraError('Invalid JSON received.');
+    }
   }
 
   /**
