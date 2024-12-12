@@ -7,6 +7,12 @@
   "files": [
     "/dist"
   ],
+  "keywords": [
+    "ad fraud",
+    "affiliate fraud detection",
+    "click-fraud",
+    "spam"
+  ],
   "scripts": {
     "start": "tsx src/test.ts",
     "build": "tsc",
