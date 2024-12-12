@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
+          scope: '@anura'
       - run: npm ci
       - run: npm publish --access public --verbose
         env:
