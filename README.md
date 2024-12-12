@@ -13,7 +13,7 @@ The **Anura SDK for JavaScript** makes it easy for developers to utilize Anura D
 
 ### Create the Anura Direct Client
 ```javascript
-import { AnuraDirect, AnuraClientError, AnuraServerError } from '@anura/anura-sdk';
+import { AnuraDirect, AnuraClientError, AnuraServerError } from '@anuraio/anura-sdk';
 
 const direct = new AnuraDirect('your-instance');
 ```
