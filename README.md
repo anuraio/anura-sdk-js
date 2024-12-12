@@ -81,10 +81,10 @@ Can get results from Anura Direct. These results are fetched during Direct's `/d
   Parameters:
   | Name | Type | Description | Required |
   | ---- | ---- | ----------- | -------- |
-  | `ipAddress` | string | The IP address of your visitor. Both IPv4 & IPv6 addresses are supported. | Yes |
-  | `userAgent` | `?string` | The user agent string of your visitor |  |
-  | `app` | `?string` | The application package identifier of your visitor (when available.) | |
-  | `device` | `?string` | The device identifer of your visitor (when available.) | |
+  | `ipAddress` | `string` | The IP address of your visitor. Both IPv4 & IPv6 addresses are supported. | Yes |
+  | `userAgent` | `string` | The user agent string of your visitor |  |
+  | `app` | `string` | The application package identifier of your visitor (when available.) | |
+  | `device` | `string` | The device identifer of your visitor (when available.) | |
 
 **`addAdditionalData(key: string, value: string): void`**
 - Adds an element of additional data to your `AnuraDirect` client.
