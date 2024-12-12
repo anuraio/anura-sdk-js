@@ -71,9 +71,9 @@ export class AnuraDirect {
       if (response.status >= 400 && response.status <= 499) {
         throw new AnuraClientError(error);
       } else if (response.status >= 500 && response.status <= 599) {
-        throw new AnuraServerError(result.error);
+        throw new AnuraServerError(error);
       } else {
-        throw new AnuraError(result.error);
+        throw new AnuraError(error);
       }
     }
 
