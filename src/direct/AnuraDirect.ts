@@ -56,6 +56,7 @@ export class AnuraDirect {
           result.invalid_traffic_type
         );
       } catch (error: any) {
+        throw new AnuraError('Invalid JSON received');
       }
     }
 
