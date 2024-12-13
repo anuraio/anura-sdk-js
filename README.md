@@ -13,7 +13,8 @@ The **Anura SDK for JavaScript** makes it easy for developers to utilize Anura D
 
 ### Create the Anura Direct Client
 ```javascript
-import { AnuraDirect, AnuraClientError, AnuraServerError } from '@anuraio/anura-sdk';
+import { AnuraDirect, AnuraClientError, AnuraServerError } from '@anuraio/anura-sdk'; // ESModule Import
+const { AnuraDirect, AnuraClientError, AnuraServerError } = require('@anuraio/anura-sdk'); // CommonJS Import
 
 const direct = new AnuraDirect('your-instance');
 ```
@@ -126,7 +127,7 @@ The result upon a successful call to `getResult()` from the `AnuraDirect` client
 **`isMobile(): boolean`**
 - Returns whether or  not the visitor has been determined to be on a mobile device.
 
-**`get result(): str`**
+**`get result(): string`**
 - Returns the raw result string value.
 
 **`get mobile(): number|null`**
