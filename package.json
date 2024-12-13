@@ -1,6 +1,6 @@
 {
   "name": "@anuraio/anura-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Anura SDK for JavaScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
