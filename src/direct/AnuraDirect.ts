@@ -1,16 +1,41 @@
 import { DirectResult } from "./DirectResult";
 import { AnuraClientError } from "./errors/AnuraClientError";
 import { AnuraError } from "./errors/AnuraError";
-import { DirectRequestParams } from "./types";
 import { AnuraServerError } from "./errors/AnuraServerError";
+
+/** GetResult options for calling the AnuraDirect API */
+type GetResultOptions = {
+  /** The IP address of your visitor. IPv4 and IPv6 addresses are supported. */
+  ipAddress: string;
+  /** The user agent string of your visitor. */
+  userAgent?: any;
+  /** The application device identifier of your visitor. */
+  app?: any;
+  /** The device identifier of your visitor. */
+  device?: any;
+  /** A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. */
+  source?: any;
+  /** A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface. */
+  campaign?: any;
+}
+
+type DirectRequestParams = {
+  instance: string;
+  ip: string;
+  source?: string;
+  campaign?: string;
+  ua?: string;
+  app?: string;
+  device?: string;
+  additional?: string;
+};
+
 
 /**
  * An API client for Anura Direct.
  */
 export class AnuraDirect {
   private _instance: string = '';
-  private _source: string = '';
-  private _campaign: string = '';
   private _useHttps: boolean = true;
   private _additionalData: any = {};
 
@@ -21,31 +46,28 @@ export class AnuraDirect {
 
   /**
    * Gets a result from Anura Direct.
-   * @param {string} ipAddress The IP address of your visitor. IPv4 and IPv6 addresses are supported.
-   * @param {string} [userAgent] The user agent string of your visitor.
-   * @param {string} [app] The application device identifier of your visitor.
-   * @param {string} [device] The device identifier of your visitor.
+   * @param options - Get result options
    * @returns {Promise<DirectResult>} A result of the assessed visitor.
    */
-  async getResult(ipAddress: string, userAgent?: string, app?: string, device?: string): Promise<DirectResult> {
-    const params: DirectRequestParams = {
+  async getResult(options: GetResultOptions): Promise<DirectResult> {
+    const requestParams: DirectRequestParams = {
       instance: this._instance,
-      ip: ipAddress
+      ip: options.ipAddress
     };
 
-    if (userAgent) params.ua = userAgent;
-    if (this._source) params.source = this._source;
-    if (this._campaign) params.campaign = this._campaign;
-    if (app) params.app = app;
-    if (device) params.device = device;
+    if (options.userAgent) requestParams.ua = options.userAgent;
+    if (options.source) requestParams.source = options.source;
+    if (options.campaign) requestParams.campaign = options.campaign;
+    if (options.app) requestParams.app = options.app;
+    if (options.device) requestParams.device = options.device;
 
     const hasAdditionalData = Object.keys(this._additionalData).length > 0;
     if (hasAdditionalData) {
-      params.additional = JSON.stringify(this._additionalData);
+      requestParams.additional = JSON.stringify(this._additionalData);
     }
 
     const apiUrl = this._getApiUrl();
-    const response = await fetch(apiUrl + '?' + new URLSearchParams(params).toString());
+    const response = await fetch(apiUrl + '?' + new URLSearchParams(requestParams).toString());
     if (response.ok) {
       try {
         const result = await response.json();
@@ -112,22 +134,6 @@ export class AnuraDirect {
 
   set instance(instance: string) {
     this._instance = instance;
-  }
-
-  get source(): string {
-    return this._source;
-  }
-
-  set source(source: string) {
-    this._source = source;
-  }
-
-  get campaign(): string {
-    return this._campaign;
-  }
-
-  set campaign(campaign: string) {
-    this._campaign = campaign;
   }
 
   get additionalData(): any {
