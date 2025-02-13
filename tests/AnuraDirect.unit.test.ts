@@ -1,4 +1,5 @@
 import { AnuraDirect } from '../src/direct/AnuraDirect';
+import { describe, it, expect } from '@jest/globals';
 
 describe('AnuraDirect client', () => {
   it('should be able to add additional data', () => {
