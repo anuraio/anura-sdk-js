@@ -19,10 +19,8 @@ const { AnuraDirect, AnuraClientError, AnuraServerError } = require('@anuraio/an
 const direct = new AnuraDirect('your-instance');
 ```
 
-### Set a custom source, campaign, and additional data for Anura Direct
+### Set additional data for Anura Direct
 ```javascript
-direct.source = 'your-source-value';
-direct.campaign = 'your-campaign-value';
 direct.addAdditionalData('1', 'your-data-value');
 ```
 
@@ -47,12 +45,14 @@ direct.removeAdditionalData(indexToRemove);
 (async function() {
   const direct = new AnuraDirect('your-instance-id');
   try {
-    const result = await direct.getResult(
-      'visitors-ip-address',
-      'visitors-user-agent', // optional
-      'visitors-app-package-id', // optional
-      'visitors-device-id', // optional
-    );
+    const result = await direct.getResult({
+      ipAddress: 'visitors-ip-address',
+      userAgent: 'visitors-user-agent', // optional
+      app: 'visitors-app-package-id', //optional
+      device: 'visitors-device-id', // optional
+      source: 'your-source-value', //optional
+      campaign: 'your-campaign-value' //optional
+    });
 
     console.log(result);
   } catch (error) {
@@ -72,20 +72,22 @@ direct.removeAdditionalData(indexToRemove);
 Can get results from Anura Direct. These results are fetched during Direct's `/direct.json` API endpoint.
 
 #### Methods
-**`async getResult(): Promise<DirectResult>`**
+**`async getResult(options: GetResultOptions): Promise<DirectResult>`**
 - Gets a result from Anura Direct. Throws an exception if an error was received from Anura Direct.
 - Exceptions thrown:
   - `AnuraClientException`: Thrown if a 4XX response is returned from Amnura Direct
   - `AnuraServerException`: Thrown if a 5XX response is returned from Anura Direct
   - `AnuraException`: General exception that represents any other type of error that occurred while fetching from Anura Direct.
 
-  Parameters:
+  `GetResultOptions` Parameters:
   | Name | Type | Description | Required |
   | ---- | ---- | ----------- | -------- |
   | `ipAddress` | `string` | The IP address of your visitor. Both IPv4 & IPv6 addresses are supported. | Yes |
   | `userAgent` | `string` | The user agent string of your visitor |  |
   | `app` | `string` | The application package identifier of your visitor (when available.) | |
   | `device` | `string` | The device identifer of your visitor (when available.) | |
+  | `source` | `any` | A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. | |
+  | `campaign` | `any` | A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface. | |
 
 **`addAdditionalData(key: string, value: string): void`**
 - Adds an element of additional data to your `AnuraDirect` client.
@@ -96,23 +98,11 @@ Can get results from Anura Direct. These results are fetched during Direct's `/d
 **`get instance(): string`**
 - Returns the instance you have set within the `AnuraDirect` client.
 
-**`get source(): string`**
-- Returns the source you have set within the `AnuraDirect` client.
-
-**`get campaign(): string`**
-- Returns the campaign you have set within the `AnuraDirect` client.
-
 **`get additionalData(): Map<string,string>`**
 - Returns the additional data you have set witin the `AnuraDirect` client
 
 **`set instance(instance: string): void`**
 - Sets the Instance ID of the `AnuraDirect` client to the `instance` value passed.
-
-**`set source(source: string): void`**
-- Sets the source of the `AnuraDirect` client to the `source` value passed.
-
-**`set campaign(campaign: string): void`**
-- Sets the campaign of the `AnuraDirect` client to the `campaign` value passed.
 
 ### DirectResult
 The result upon a successful call to `getResult()` from the `AnuraDirect` client. It contains not only the result from Anura Direct, but some other methods to help you use the result as well.
