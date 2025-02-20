@@ -1,5 +1,5 @@
 /**
- * Additional Data object used by Anura Direct.
+ * Additional Data class to represent Additional Data that can be passed to Anura Direct when getting results.
  */
 export class AdditionalData {
   private _data: Map<string, string> = new Map();
@@ -29,7 +29,7 @@ export class AdditionalData {
   }
 
   /**
-   * Returns the number elements set within Additional Data. 
+   * Returns the number elements set within additional data. 
    */
   public size(): number {
     return this._data.size;
