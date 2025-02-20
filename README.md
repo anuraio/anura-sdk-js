@@ -85,7 +85,7 @@ Can get results from Anura Direct. These results are fetched during Direct's `/d
 **`async getResult(options: GetResultOptions): Promise<DirectResult>`**
 - Gets a result from Anura Direct. Throws an exception if an error was received from Anura Direct.
 - Exceptions thrown:
-  - `AnuraClientError`: Thrown if a 4XX response is returned from Amnura Direct
+  - `AnuraClientError`: Thrown if a 4XX response is returned from Anura Direct
   - `AnuraServerError`: Thrown if a 5XX response is returned from Anura Direct
   - `AnuraError`: General exception that represents any other type of error that occurred while fetching from Anura Direct.
 
