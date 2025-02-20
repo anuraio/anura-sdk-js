@@ -13,15 +13,20 @@ The **Anura SDK for JavaScript** makes it easy for developers to utilize Anura D
 
 ### Create the Anura Direct Client
 ```javascript
-import { AnuraDirect, AnuraClientError, AnuraServerError } from '@anuraio/anura-sdk'; // ESModule Import
-const { AnuraDirect, AnuraClientError, AnuraServerError } = require('@anuraio/anura-sdk'); // CommonJS Import
+import { AnuraDirect, AdditionalData, AnuraClientError, AnuraServerError } from '@anuraio/anura-sdk'; // ESModule Import
+const { AnuraDirect, AdditionalData, AnuraClientError, AnuraServerError } = require('@anuraio/anura-sdk'); // CommonJS Import
 
 const direct = new AnuraDirect('your-instance');
 ```
 
 ### Set additional data for Anura Direct
 ```javascript
-direct.addAdditionalData('1', 'your-data-value');
+/**
+ * To send additional data to Anura Direct, use the AdditionalData class. 
+ * We will provide this object when calling direct.getResult()
+ */
+const additionalData = new AdditionalData();
+additionalData.addElement('1', 'your-data-value');
 ```
 
 ### Updating additional data at a specific index
@@ -31,13 +36,13 @@ direct.addAdditionalData('1', 'your-data-value');
  * simply add the element again but with a new value.
  */
 const indexToUpdate = '1';
-direct.addAdditionalData(indexToUpdate, 'your-new-data-value');
+additionalData.addElement(indexToUpdate, 'your-new-data-value');
 ```
 
 ### Removing an element from additional data
 ```javascript
 const indexToRemove = '1';
-direct.removeAdditionalData(indexToRemove);
+additionalData.removeElement(indexToRemove);
 ```
 
 ### Get a result from Anura Direct
@@ -50,8 +55,9 @@ direct.removeAdditionalData(indexToRemove);
       userAgent: 'visitors-user-agent', // optional
       app: 'visitors-app-package-id', //optional
       device: 'visitors-device-id', // optional
-      source: 'your-source-value', //optional
-      campaign: 'your-campaign-value' //optional
+      source: 'your-source-value', // optional
+      campaign: 'your-campaign-value', //optional
+      additionalData: additionalData, //optional
     });
 
     console.log(result);
@@ -75,34 +81,48 @@ Can get results from Anura Direct. These results are fetched during Direct's `/d
 **`async getResult(options: GetResultOptions): Promise<DirectResult>`**
 - Gets a result from Anura Direct. Throws an exception if an error was received from Anura Direct.
 - Exceptions thrown:
-  - `AnuraClientException`: Thrown if a 4XX response is returned from Amnura Direct
-  - `AnuraServerException`: Thrown if a 5XX response is returned from Anura Direct
-  - `AnuraException`: General exception that represents any other type of error that occurred while fetching from Anura Direct.
+  - `AnuraClientError`: Thrown if a 4XX response is returned from Amnura Direct
+  - `AnuraServerError`: Thrown if a 5XX response is returned from Anura Direct
+  - `AnuraError`: General exception that represents any other type of error that occurred while fetching from Anura Direct.
 
   `GetResultOptions` Parameters:
   | Name | Type | Description | Required |
   | ---- | ---- | ----------- | -------- |
   | `ipAddress` | `string` | The IP address of your visitor. Both IPv4 & IPv6 addresses are supported. | Yes |
-  | `userAgent` | `string` | The user agent string of your visitor |  |
-  | `app` | `string` | The application package identifier of your visitor (when available.) | |
-  | `device` | `string` | The device identifer of your visitor (when available.) | |
-  | `source` | `any` | A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. | |
-  | `campaign` | `any` | A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface. | |
-
-**`addAdditionalData(key: string, value: string): void`**
-- Adds an element of additional data to your `AnuraDirect` client.
-
-**`removeAdditionalData(key: string): void`**
-- Removes the element of your additional data array located at the provided `key`.
+  | `userAgent` | `string\|null` | The user agent string of your visitor |  |
+  | `app` | `string\|null` | The application package identifier of your visitor (when available.) | |
+  | `device` | `string\|null` | The device identifer of your visitor (when available.) | |
+  | `source` | `string\|null` | A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. | |
+  | `campaign` | `string\|null` | A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface. | |
+  | `additionalData`| `AdditionalData\|null` | Additional Data gives you the ability to pass in select points of data with your direct requests, essentially turning Anura into "your database for transactional data". | |
 
 **`get instance(): string`**
 - Returns the instance you have set within the `AnuraDirect` client.
 
-**`get additionalData(): Map<string,string>`**
-- Returns the additional data you have set witin the `AnuraDirect` client
-
 **`set instance(instance: string): void`**
 - Sets the Instance ID of the `AnuraDirect` client to the `instance` value passed.
+
+**`get useHttps(): boolean`**
+- Returns whether or you're currently using the **HTTPS** when calling the Anura Direct API. If false, you are using **HTTP** instead.
+
+**`set useHttps(useHttps: boolean): void`**
+- Sets whether to use **HTTPS** or **HTTP** according to the `useHttps` value passed.
+
+### AdditionalData
+An object used for sending [additional data](https://docs.anura.io/integration/additional-data) to Anura Direct.
+
+### Methods
+**`addElement(key: string, value: string): void`**
+- Adds an element of data to your `AdditionalData`.
+
+**`removeElement(key: string): void`**
+- Removes the element of data located at the provided `key` from your `AdditionalData`.
+
+**`toString(): string`**
+- Returns your `AdditionalData` as a JSON string.
+
+**`size(): number`**
+- Returns the number of elements currently set within your `AdditionalData`
 
 ### DirectResult
 The result upon a successful call to `getResult()` from the `AnuraDirect` client. It contains not only the result from Anura Direct, but some other methods to help you use the result as well.
