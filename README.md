@@ -57,11 +57,11 @@ additionalData.removeElement(indexToRemove);
     const result = await direct.getResult({
       ipAddress: 'visitors-ip-address',
       userAgent: 'visitors-user-agent', // optional
-      app: 'visitors-app-package-id', //optional
-      device: 'visitors-device-id', // optional
-      source: 'your-source-value', // optional
-      campaign: 'your-campaign-value', //optional
-      additionalData: additionalData, //optional
+      app: 'visitors-app-package-id',   // optional
+      device: 'visitors-device-id',     // optional
+      source: 'your-source-value',      // optional
+      campaign: 'your-campaign-value',  // optional
+      additionalData: additionalData,   // optional
     });
 
     console.log(result);
