@@ -29,7 +29,7 @@ export class AdditionalData {
   }
 
   /**
-   * Returns the number elements set within additional data. 
+   * Returns the number of elements set within additional data. 
    */
   public size(): number {
     return this._data.size;
