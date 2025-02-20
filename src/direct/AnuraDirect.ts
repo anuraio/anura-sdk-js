@@ -1,22 +1,25 @@
+import { AdditionalData } from "./AdditionalData";
 import { DirectResult } from "./DirectResult";
 import { AnuraClientError } from "./errors/AnuraClientError";
 import { AnuraError } from "./errors/AnuraError";
 import { AnuraServerError } from "./errors/AnuraServerError";
 
-/** GetResult options for calling the AnuraDirect API */
-type GetResultOptions = {
+/** Options object for calling getResult() */
+export type GetResultOptions = {
   /** The IP address of your visitor. IPv4 and IPv6 addresses are supported. */
   ipAddress: string;
   /** The user agent string of your visitor. */
-  userAgent?: any;
+  userAgent?: string|null;
   /** The application device identifier of your visitor. */
-  app?: any;
+  app?: string|null;
   /** The device identifier of your visitor. */
-  device?: any;
+  device?: string|null;
   /** A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. */
-  source?: any;
+  source?: string|null;
   /** A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface. */
-  campaign?: any;
+  campaign?: string|null;
+  /** Additional Data gives you the ability to pass in select points of data with your direct requests, essentially turning Anura into "your database for transactional data". */
+  additionalData?: AdditionalData|null;
 }
 
 type DirectRequestParams = {
@@ -37,11 +40,12 @@ type DirectRequestParams = {
 export class AnuraDirect {
   private _instance: string = '';
   private _useHttps: boolean = true;
-  private _additionalData: any = {};
+  private _apiUrl: string = 'https://direct.anura.io/direct.json';
 
   constructor(instance: string, useHttps: boolean = true) {
     this._instance = instance;
     this._useHttps = useHttps;
+    this._apiUrl = useHttps ? 'https://direct.anura.io/direct.json' : 'http://direct.anura.io/direct.json'; 
   }
 
   /**
@@ -61,33 +65,39 @@ export class AnuraDirect {
     if (options.app) requestParams.app = options.app;
     if (options.device) requestParams.device = options.device;
 
-    const hasAdditionalData = Object.keys(this._additionalData).length > 0;
+    const additionalData = options.additionalData;
+    const hasAdditionalData = !!((additionalData) && (additionalData.size() > 0));
     if (hasAdditionalData) {
-      requestParams.additional = JSON.stringify(this._additionalData);
+      console.log(additionalData.toString());
+      requestParams.additional = additionalData.toString();
+    }
+    
+    let response;
+    try {
+      response = await fetch(this._apiUrl + '?' + new URLSearchParams(requestParams).toString());
+    } catch (error) {
+      throw new AnuraError(`Failed to fetch: ${error}`);
     }
 
-    const apiUrl = this._getApiUrl();
-    const response = await fetch(apiUrl + '?' + new URLSearchParams(requestParams).toString());
+    let result;
     if (response.ok) {
-      try {
-        const result = await response.json();
-        return new DirectResult(
-          result.result,
-          result.mobile,
-          result.rule_sets,
-          result.invalid_traffic_type
-        );
-      } catch (error: any) {
-        throw new AnuraError('Invalid JSON received');
-      }
-    }
-
-    if (!response.ok) {
-      let result;
       try {
         result = await response.json();
       } catch (error: any) {
-        result = 'Invalid JSON received.';
+        throw new AnuraError('Invalid JSON received from Anura Direct.');
+      }
+
+      return new DirectResult(
+        result.result,
+        result.mobile,
+        result.rule_sets,
+        result.invalid_traffic_type
+      );
+    } else {
+      try {
+        result = await response.json();
+      } catch (error: any) {
+        result = 'Invalid JSON received from Anura Direct.';
       }
 
       const error = result.error ?? result;
@@ -99,33 +109,6 @@ export class AnuraDirect {
         throw new AnuraError(error);
       }
     }
-
-    try {
-      return await response.json();
-    } catch (error: any) {
-      throw new AnuraError('Invalid JSON received.');
-    }
-  }
-
-  /**
-   * Adds an element (key/value pair) of additional data.
-   * @param {string} key
-   * @param {string} value 
-   */
-  addAdditionalData(key: string, value: string): void {
-    this._additionalData[key] = value;
-  }
-
-  /**
-   * Removes an element (key/value pair) from your additional data. 
-   * @param {string} key The key of the element you would like to remove.
-   */
-  removeAdditionalData(key: string): void {
-    delete this._additionalData[key];
-  }
-
-  private _getApiUrl(): string {
-    return (this._useHttps) ? 'https://direct.anura.io/direct.json' : 'http://direct.anura.io/direct.json';
   }
 
   get instance(): string {
@@ -136,7 +119,12 @@ export class AnuraDirect {
     this._instance = instance;
   }
 
-  get additionalData(): any {
-    return this._additionalData;
+  get useHttps(): boolean {
+    return this._useHttps;
+  }
+
+  set useHttps(useHttps: boolean) {
+    this._useHttps = useHttps;
+    this._apiUrl = useHttps ? 'https://direct.anura.io/direct.json' : 'http://direct.anura.io/direct.json'; 
   }
 }
