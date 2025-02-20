@@ -1,5 +1,5 @@
-# Anura SDK for JavaScript
-The **Anura SDK for JavaScript** makes it easy for developers to utilize Anura Direct within their JavaScript code, and begin analyzing their traffic. You can get started in minutes by installing the SDK from [npm](https://www.npmjs.com/).
+# Anura SDK for JavaScript (Node.js)
+The **Anura SDK for JavaScript (Node.js)** makes it easy for developers to utilize Anura Direct within their JavaScript code, and begin analyzing their traffic. You can get started in minutes by installing the SDK from [npm](https://www.npmjs.com/).
 
 ## Getting Started
 1. **Have an open active account with Anura**. You an see more about Anura's offerings [here.](https://www.anura.io/product#plans-pricing)
@@ -8,6 +8,10 @@ The **Anura SDK for JavaScript** makes it easy for developers to utilize Anura D
 4. View our [**Quick Examples**](#quick-examples) to immediately begin using the SDK!
 
 ## Installing the SDK
+You can install the SDK with `npm` by running the following:
+```sh
+npm install @anuraio/anura-sdk
+```
 
 ## Quick Examples
 
