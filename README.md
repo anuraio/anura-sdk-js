@@ -30,7 +30,7 @@ const direct = new AnuraDirect('your-instance');
  * We will provide this object when calling direct.getResult()
  */
 const additionalData = new AdditionalData();
-additionalData.addElement('1', 'your-data-value');
+additionalData.addElement(1, 'your-data-value');
 ```
 
 ### Updating additional data at a specific index
@@ -39,13 +39,13 @@ additionalData.addElement('1', 'your-data-value');
  * To update an element of additional data at a specific index,
  * simply add the element again but with a new value.
  */
-const indexToUpdate = '1';
+const indexToUpdate = 1;
 additionalData.addElement(indexToUpdate, 'your-new-data-value');
 ```
 
 ### Removing an element from additional data
 ```javascript
-const indexToRemove = '1';
+const indexToRemove = 1;
 additionalData.removeElement(indexToRemove);
 ```
 
@@ -116,10 +116,10 @@ Can get results from Anura Direct. These results are fetched during Direct's `/d
 An object used for sending [additional data](https://docs.anura.io/integration/additional-data) to Anura Direct.
 
 ### Methods
-**`addElement(key: string, value: string): void`**
+**`addElement(key: number, value: string): void`**
 - Adds an element of data to your `AdditionalData`.
 
-**`removeElement(key: string): void`**
+**`removeElement(key: number): void`**
 - Removes the element of data located at the provided `key` from your `AdditionalData`.
 
 **`toString(): string`**
