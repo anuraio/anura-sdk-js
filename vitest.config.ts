@@ -7,6 +7,5 @@ export default defineConfig({
       reporter: ['text', 'html']
     },
     include: ["tests/**/*.test.ts"],
-    // exclude: ["**/*.e2e.test.ts", "**/*.integration.test.ts"],
   }
 })
