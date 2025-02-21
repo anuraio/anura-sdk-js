@@ -19,7 +19,7 @@ export class DirectResult {
      * @returns {boolean} whether the visitor is suspect.
      */
     public isSuspect(): boolean {
-        return (this._result === 'suspect') ? true : false;
+        return this._result === 'suspect';
     }
 
     /**
