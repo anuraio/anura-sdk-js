@@ -97,7 +97,7 @@ Can get results from Anura Direct. These results are fetched during Direct's `/d
   | `app` | `string\|null` | The application package identifier of your visitor (when available.) | |
   | `device` | `string\|null` | The device identifer of your visitor (when available.) | |
   | `source` | `string\|null` | A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. | |
-  | `campaign` | `string\|null` | A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface. | |
+  | `campaign` | `string\|null` | A subset variable of "source", declared by you, to identify "campaign" traffic within Anura's dashboard interface. | |
   | `additionalData`| `AdditionalData\|null` | Additional Data gives you the ability to pass in select points of data with your direct requests, essentially turning Anura into "your database for transactional data". | |
 
 **`get instance(): string`**
