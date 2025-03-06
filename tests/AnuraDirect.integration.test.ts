@@ -1,5 +1,5 @@
 import { AnuraDirect } from "../src/direct/AnuraDirect";
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 
 describe('AnuraDirect client', () => {
   it('throws an error if the instance ID is empty', async() => {
