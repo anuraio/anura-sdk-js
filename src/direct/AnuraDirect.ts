@@ -68,7 +68,6 @@ export class AnuraDirect {
     const additionalData = options.additionalData;
     const hasAdditionalData = !!((additionalData) && (additionalData.size() > 0));
     if (hasAdditionalData) {
-      console.log(additionalData.toString());
       requestParams.additional = additionalData.toString();
     }
     
