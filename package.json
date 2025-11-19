@@ -1,6 +1,6 @@
 {
   "name": "@anuraio/anura-sdk",
-  "version": "1.0.1",
+  "version": "3.0.1",
   "description": "Anura SDK for JavaScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,19 +16,17 @@
   "scripts": {
     "start": "tsx src/test.ts",
     "build": "tsc",
-    "test": "jest"
+    "test": "vitest --coverage",
+    "test:unit": "vitest .unit.test.ts",
+    "test:integration": "vitest .integration.test.ts"
   },
   "author": "Xavier Mejia",
   "license": "GPL-3.0",
   "devDependencies": {
-    "@babel/core": "7.26.0",
-    "@babel/preset-env": "7.26.0",
-    "@babel/preset-typescript": "7.26.0",
-    "@types/jest": "29.5.14",
     "@types/node": "22.9.1",
-    "babel-jest": "29.7.0",
-    "jest": "29.7.0",
-    "tsx": "4.19.2",
-    "typescript": "5.7.2"
+    "@vitest/coverage-v8": "4.0.10",
+    "tsx": "4.19.3",
+    "typescript": "5.9.3",
+    "vitest": "4.0.10"
   }
 }

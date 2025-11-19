@@ -1,71 +1,102 @@
+import { AdditionalData } from "./AdditionalData";
 import { DirectResult } from "./DirectResult";
 import { AnuraClientError } from "./errors/AnuraClientError";
 import { AnuraError } from "./errors/AnuraError";
-import { DirectRequestParams } from "./types";
 import { AnuraServerError } from "./errors/AnuraServerError";
+
+/** Options object for calling getResult() */
+export type GetResultOptions = {
+  /** The IP address of your visitor. IPv4 and IPv6 addresses are supported. */
+  ipAddress: string;
+  /** The user agent string of your visitor. */
+  userAgent?: string|null;
+  /** The application device identifier of your visitor. */
+  app?: string|null;
+  /** The device identifier of your visitor. */
+  device?: string|null;
+  /** A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. */
+  source?: string|null;
+  /** A subset variable of "source," declared by you, to identify "campaign" traffic within Anura's dashboard interface. */
+  campaign?: string|null;
+  /** Additional Data gives you the ability to pass in select points of data with your direct requests, essentially turning Anura into "your database for transactional data". */
+  additionalData?: AdditionalData|null;
+}
+
+type DirectRequestParams = {
+  instance: string;
+  ip: string;
+  source?: string;
+  campaign?: string;
+  ua?: string;
+  app?: string;
+  device?: string;
+  additional?: string;
+};
+
 
 /**
  * An API client for Anura Direct.
  */
 export class AnuraDirect {
   private _instance: string = '';
-  private _source: string = '';
-  private _campaign: string = '';
   private _useHttps: boolean = true;
-  private _additionalData: any = {};
+  private _apiUrl: string = 'https://direct.anura.io/direct.json';
 
   constructor(instance: string, useHttps: boolean = true) {
     this._instance = instance;
     this._useHttps = useHttps;
+    this._apiUrl = useHttps ? 'https://direct.anura.io/direct.json' : 'http://direct.anura.io/direct.json'; 
   }
 
   /**
    * Gets a result from Anura Direct.
-   * @param {string} ipAddress The IP address of your visitor. IPv4 and IPv6 addresses are supported.
-   * @param {string} [userAgent] The user agent string of your visitor.
-   * @param {string} [app] The application device identifier of your visitor.
-   * @param {string} [device] The device identifier of your visitor.
+   * @param options - Get result options
    * @returns {Promise<DirectResult>} A result of the assessed visitor.
    */
-  async getResult(ipAddress: string, userAgent?: string, app?: string, device?: string): Promise<DirectResult> {
-    const params: DirectRequestParams = {
+  async getResult(options: GetResultOptions): Promise<DirectResult> {
+    const requestParams: DirectRequestParams = {
       instance: this._instance,
-      ip: ipAddress
+      ip: options.ipAddress
     };
 
-    if (userAgent) params.ua = userAgent;
-    if (this._source) params.source = this._source;
-    if (this._campaign) params.campaign = this._campaign;
-    if (app) params.app = app;
-    if (device) params.device = device;
+    if (options.userAgent) requestParams.ua = options.userAgent;
+    if (options.source) requestParams.source = options.source;
+    if (options.campaign) requestParams.campaign = options.campaign;
+    if (options.app) requestParams.app = options.app;
+    if (options.device) requestParams.device = options.device;
 
-    const hasAdditionalData = Object.keys(this._additionalData).length > 0;
+    const additionalData = options.additionalData;
+    const hasAdditionalData = !!((additionalData) && (additionalData.size() > 0));
     if (hasAdditionalData) {
-      params.additional = JSON.stringify(this._additionalData);
+      requestParams.additional = additionalData.toString();
+    }
+    
+    let response;
+    try {
+      response = await fetch(this._apiUrl + '?' + new URLSearchParams(requestParams).toString());
+    } catch (error) {
+      throw new AnuraError(`Failed to fetch: ${error}`);
     }
 
-    const apiUrl = this._getApiUrl();
-    const response = await fetch(apiUrl + '?' + new URLSearchParams(params).toString());
+    let result;
     if (response.ok) {
-      try {
-        const result = await response.json();
-        return new DirectResult(
-          result.result,
-          result.mobile,
-          result.rule_sets,
-          result.invalid_traffic_type
-        );
-      } catch (error: any) {
-        throw new AnuraError('Invalid JSON received');
-      }
-    }
-
-    if (!response.ok) {
-      let result;
       try {
         result = await response.json();
       } catch (error: any) {
-        result = 'Invalid JSON received.';
+        throw new AnuraError('Invalid JSON received from Anura Direct.');
+      }
+
+      return new DirectResult(
+        result.result,
+        result.mobile,
+        result.rule_sets,
+        result.invalid_traffic_type
+      );
+    } else {
+      try {
+        result = await response.json();
+      } catch (error: any) {
+        result = 'Invalid JSON received from Anura Direct.';
       }
 
       const error = result.error ?? result;
@@ -77,33 +108,6 @@ export class AnuraDirect {
         throw new AnuraError(error);
       }
     }
-
-    try {
-      return await response.json();
-    } catch (error: any) {
-      throw new AnuraError('Invalid JSON received.');
-    }
-  }
-
-  /**
-   * Adds an element (key/value pair) of additional data.
-   * @param {string} key
-   * @param {string} value 
-   */
-  addAdditionalData(key: string, value: string): void {
-    this._additionalData[key] = value;
-  }
-
-  /**
-   * Removes an element (key/value pair) from your additional data. 
-   * @param {string} key The key of the element you would like to remove.
-   */
-  removeAdditionalData(key: string): void {
-    delete this._additionalData[key];
-  }
-
-  private _getApiUrl(): string {
-    return (this._useHttps) ? 'https://direct.anura.io/direct.json' : 'http://direct.anura.io/direct.json';
   }
 
   get instance(): string {
@@ -114,23 +118,12 @@ export class AnuraDirect {
     this._instance = instance;
   }
 
-  get source(): string {
-    return this._source;
+  get useHttps(): boolean {
+    return this._useHttps;
   }
 
-  set source(source: string) {
-    this._source = source;
-  }
-
-  get campaign(): string {
-    return this._campaign;
-  }
-
-  set campaign(campaign: string) {
-    this._campaign = campaign;
-  }
-
-  get additionalData(): any {
-    return this._additionalData;
+  set useHttps(useHttps: boolean) {
+    this._useHttps = useHttps;
+    this._apiUrl = useHttps ? 'https://direct.anura.io/direct.json' : 'http://direct.anura.io/direct.json'; 
   }
 }
